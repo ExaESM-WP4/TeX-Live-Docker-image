@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+env:
+  GITHUB_REF: ${{ github.ref }}
+  GITHUB_SHA: ${{ github.sha }}
+  IMAGE: exaesmwp4/esm-vfc-stacks
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set Job Environment Variables
+        run: |
+          CALVER="$( date -u '+%Y.%m.%d' )"
+          SHA="$( git rev-parse --short ${GITHUB_SHA} )"
+          DOCKER_TAG="${CALVER}-${SHA}"
+          IMAGE_TAGGED="${IMAGE}:${DOCKER_TAG}"
+          IMAGE_LATEST="${IMAGE}:latest"
+          echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "::set-env name=IMAGE_TAGGED::${IMAGE_TAGGED}"
+          echo "::set-env name=IMAGE_LATEST::${IMAGE_LATEST}"
+      - name: Build with docker
+        run: docker build -t ${IMAGE_TAGGED} .
+      - name: Also tag image as latest
+        run: docker tag ${IMAGE_TAGGED} ${IMAGE_LATEST}
+      - name: Test docker image
+        run: |
+          cd tests || exit 1
+          docker run -v ${PWD}:/home ${IMAGE_TAGGED} latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
+          cd .. || exit 1
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-output
+          path: tests/*
+      - name: Authenticate with DockerHub and push
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo ${{ secrets.docker_access_token }} | docker login -u ${{ secrets.docker_user_name }} --password-stdin
+          docker push "${IMAGE_TAGGED}""
+          docker push "${IMAGE_LATEST}"
