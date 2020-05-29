@@ -7,5 +7,5 @@ jobs:
     runs-on: ubuntu-latest
     container: docker://exaesmwp4/texlive:latest
     steps:
-    - uses: actions/checkout@v1
-    - run: cd tex/ && latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
+    - uses: actions/checkout@v2
+    - run: cd $GITHUB_WORKSPACE/tex/ && latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
