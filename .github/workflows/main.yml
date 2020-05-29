@@ -11,7 +11,7 @@ on:
 env:
   GITHUB_REF: ${{ github.ref }}
   GITHUB_SHA: ${{ github.sha }}
-  IMAGE: exaesmwp4/esm-vfc-stacks
+  IMAGE: exaesmwp4/texlive
 
 jobs:
   build:
