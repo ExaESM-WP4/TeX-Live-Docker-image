@@ -34,7 +34,7 @@ jobs:
       - name: Also tag image as latest
         run: docker tag ${IMAGE_TAGGED} ${IMAGE_LATEST}
       - name: Test docker image
-        run: docker run ${IMAGE_TAGGED} latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
+        run: docker run -v ${PWD}:/home ${IMAGE_TAGGED} latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
       # Pushing to dockerhub not operational yet:
       # - name: Authenticate with DockerHub and push
       #   if: github.ref == 'refs/heads/master'
