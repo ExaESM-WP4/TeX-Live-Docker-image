@@ -37,8 +37,9 @@ jobs:
         run: |
           cd tests || exit 1
           docker run -v ${PWD}:/home ${IMAGE_TAGGED} latexmk -pdf -pdflatex='pdflatex --shell-escape' example.tex
+          cd .. || exit 1
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: test-output
           path: tests/*
