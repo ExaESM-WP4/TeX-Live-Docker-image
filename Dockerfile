@@ -1,10 +1,12 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
-RUN apt-get update --yes \
+RUN export DEBIAN_FRONTEND=noninteractive \
+ && apt-get update --yes \
  && apt-get install --yes --no-install-recommends \
-    texlive-latex-base texlive-latex-recommended texlive-latex-extra latexmk python-pip \
+    texlive-latex-base texlive-latex-recommended texlive-latex-extra latexmk \
+    python-is-python3 python3-pip \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install Pygments
+RUN pip3 install Pygments
 
 WORKDIR /home
