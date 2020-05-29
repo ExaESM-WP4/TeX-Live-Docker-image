@@ -9,4 +9,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 RUN pip3 install Pygments
 
+RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+ && dpkg-reconfigure --frontend noninteractive tzdata
+
 WORKDIR /home
